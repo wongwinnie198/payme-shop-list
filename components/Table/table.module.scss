@@ -1,0 +1,46 @@
+/**variables*/
+//border
+$--t-border: 1px solid black;
+//table content spacing
+$--t-padding: 1rem 0;
+//table fonts styling
+$--thead-font-size: 2rem;
+
+
+
+/**table common styles*/
+//adding border
+.table,
+.th,
+.tableData,
+.tableRow {
+    border: $--t-border;
+}
+
+/**table*/
+.tableContainer {
+  margin: 0 auto;
+  width: 100%;
+  .table {
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+  }
+  .tableHead {
+    font-size: $--thead-font-size;
+    .th {
+      padding: $--t-padding;
+    }
+  }
+
+  .tableBody {
+    text-align: center;
+  }
+  .tableRow {
+    .tableData {
+      padding: $--t-padding;
+    }
+  }
+  .tableColumn {
+  }
+}

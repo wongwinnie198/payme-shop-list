@@ -1,33 +1,32 @@
 import React, { useMemo } from "react";
-import { TableKeyedProps, useTable } from "react-table";
+import { useTable } from "react-table";
+import tableStyles from "./table.module.scss";
 
-export const Table: React.FC = () => {
+export const Table = () => {
   const data = useMemo(
     () => [
       {
-        col1: "Hello",
-        col2: "World",
+        iconCol: "Hello",
+        nameCol: "World",
+        linkCol: "World",
       },
-      {
-        col1: "react-table",
-        col2: "rocks",
-      },
-      {
-        col1: "whatever",
-        col2: "you want",
-      },
+      
     ],
     []
   );
   const columns = useMemo(
     () => [
       {
-        Header: "Column 1",
-        accessor: "col1", // accessor is the "key" in the data
+        Header: "Icon",
+        accessor: "iconCol", // accessor is the "key" in the data
       },
       {
-        Header: "Column 2",
-        accessor: "col2",
+        Header: "Name",
+        accessor: "nameCol",
+      },
+      {
+        Header: "Link",
+        accessor: "linkCol",
       },
     ],
     []
@@ -35,49 +34,52 @@ export const Table: React.FC = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
   return (
-    <table {...getTableProps()} style={{ border: "solid 1px blue" }}>
-      <thead>
-        {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <th
-                {...column.getHeaderProps()}
-                style={{
-                  borderBottom: "solid 3px red",
-                  background: "aliceblue",
-                  color: "black",
-                  fontWeight: "bold",
-                }}
-              >
-                {column.render("Header")}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row) => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                return (
-                  <td
-                    {...cell.getCellProps()}
-                    style={{
-                      padding: "10px",
-                      border: "solid 1px gray",
-                      background: "papayawhip",
-                    }}
-                  >
-                    {cell.render("Cell")}
-                  </td>
-                );
-              })}
+    <div className={tableStyles.tableContainer}>
+      <table {...getTableProps()} className={tableStyles.table}>
+        <thead className={tableStyles.tableHead}>
+          {headerGroups.map((headerGroup, ind) => (
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              key={ind}
+              className={tableStyles.tableRow}
+            >
+              {headerGroup.headers.map((column, ind) => (
+                <th
+                  {...column.getHeaderProps()}
+                  key={ind}
+                  className={tableStyles.th}
+                >
+                  {column.render("Header")}
+                </th>
+              ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()} className={tableStyles.tableBody}>
+          {rows.map((row, ind) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                key={ind}
+                className={tableStyles.tableRow}
+              >
+                {row.cells.map((cell, ind) => {
+                  return (
+                    <td
+                      {...cell.getCellProps()}
+                      key={ind}
+                      className={tableStyles.tableData}
+                    >
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
