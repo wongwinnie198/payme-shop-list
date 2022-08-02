@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { TableKeyedProps, useTable } from "react-table";
+import { useTable } from "react-table";
 
-export const Table: React.FC = () => {
+export const Table = () => {
   const data = useMemo(
     () => [
       {
@@ -19,8 +19,9 @@ export const Table: React.FC = () => {
     ],
     []
   );
-  const columns = useMemo(
-    () => [
+  const columns =
+    useMemo >
+    (() => [
       {
         Header: "Column 1",
         accessor: "col1", // accessor is the "key" in the data
@@ -30,18 +31,18 @@ export const Table: React.FC = () => {
         accessor: "col2",
       },
     ],
-    []
-  );
+    []);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
   return (
     <table {...getTableProps()} style={{ border: "solid 1px blue" }}>
       <thead>
-        {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
+        {headerGroups.map((headerGroup, ind) => (
+          <tr {...headerGroup.getHeaderGroupProps()} key={ind}>
+            {headerGroup.headers.map((column, ind) => (
               <th
                 {...column.getHeaderProps()}
+                key={ind}
                 style={{
                   borderBottom: "solid 3px red",
                   background: "aliceblue",
@@ -56,14 +57,15 @@ export const Table: React.FC = () => {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row) => {
+        {rows.map((row, ind) => {
           prepareRow(row);
           return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
+            <tr {...row.getRowProps()} key={ind}>
+              {row.cells.map((cell, ind) => {
                 return (
                   <td
                     {...cell.getCellProps()}
+                    key={ind}
                     style={{
                       padding: "10px",
                       border: "solid 1px gray",
