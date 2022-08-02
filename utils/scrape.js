@@ -1,22 +1,72 @@
 const puppeteer = require("puppeteer");
-const fs = require("fs"),
+const fs = require("fs").promises,
   PDFParser = require("pdf2json");
 
-const queryStrings = [];
+class Links {
+  getFrom() {
+    return `https://payme.hsbc.com.hk/zh-hk/merchant-list`;
+  }
 
-/**cannot involve system font */
-const links = {
-  from: `https://payme.hsbc.com.hk/zh-hk/merchant-list`,
-  to: `https://www.google.com/search?q=${queryStrings[0]}&sourceid=chrome&ie=UTF-8`,
+  getToArr() {
+    const promisedFile = new Promise((resolve, reject) => {
+      const toLinks = [];
+      const res = fs.readFile("target.json", (err, data) => {
+        if (err) throw err;
+        let parsedData = JSON.parse(data);
+        for (let i in parsedData) {
+          toLinks.push(
+            `https://www.google.com/search?q=${parsedData[i]}&sourceid=chrome&ie=UTF-8`
+          );
+        }
+        //   console.log(toLinks);
+        return toLinks;
+      });
+      resolve(toLinks);
+    });
+    // return toLinks;
+    return promisedFile;
+  }
+}
+
+//TODO: add class name checking
+const classNames = {
+  payme: "name",
 };
 
-const scraperPdf = async () => {
+const scraperGoog = async () => {
   const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(links.from, {
-    waitUntil: "networkidle2",
-  });
-  await page.pdf({ path: links.fromPdf, format: "a4" });
+  try {
+    const page = await browser.newPage();
+    const toLinks = [];
+    const data = await fs.readFile("target.json", (err, data) => {
+      if (err) throw err;
+      //   console.log(toLinks);
+    });
+    const dataObj = JSON.parse(data.toString());
+    for (let i in dataObj) {
+      toLinks.push(
+        `https://www.google.com/search?q=${dataObj[i]}&sourceid=chrome&ie=UTF-8`
+      );
+    }
+    // console.log(JSON.parse(data.toString()));
+
+    // console.log(toLinks[0]);
+    const resArr = [];
+    for (let i = 0; i < 10; i++) {
+      await page.goto(toLinks[i]);
+      const googRes = await page.evaluate(() => {
+        return document.getElementsByTagName("cite")[i].innerText;
+      });
+      resArr.push(googRes);
+      console.log(
+        "🚀 ~ file: scrape.js ~ line 59 ~ googRes ~ document",
+        googRes,
+        resArr
+      );
+    }
+  } catch (err) {
+    console.error(err);
+  }
 
   await browser.close();
 };
@@ -26,11 +76,14 @@ const scraperPayme = async () => {
   const page = await browser.newPage();
 
   try {
-    await page.goto(`${links.from}`);
+    const testLink = new Links();
+    await page.goto(`${testLink.from}`);
 
     const data = await page.evaluate(() => {
       const merchantArr = [];
-      const merchantHtmlCol = document.getElementsByClassName("name");
+      const merchantHtmlCol = document.getElementsByClassName(
+        `${classNames.payme}`
+      );
       for (let i = 0; i < merchantHtmlCol.length; i++) {
         merchantArr.push(merchantHtmlCol[i].innerHTML.replace("<!---->", ""));
       }
@@ -52,4 +105,4 @@ const scraperPayme = async () => {
   await browser.close();
 };
 
-scraperPayme();
+scraperGoog();
