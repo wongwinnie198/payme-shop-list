@@ -52,17 +52,35 @@ const googleScrape = async (arr) => {
     });
     await Promise.all(linksRes).then((res) => {
       //TODO make sense file name and make write new files if not exists
-      fs.writeFile(
-        // `${__dirname}/${arr.slice(0, 1)}.json`,
-        `google.json`,
-        JSON.stringify(res),
-        // { flag: "wx" },
-        () => {
-          console.log(
-            "🚀 ~ file: scrape.js ~ line 44 ~ fs.writeFile ~ linkRes"
+      fs.stat(`google.json`, function (err, _) {
+        console.log("err.code", err.code);
+        // if (err == null) {
+        console.log(`google.json exists`);
+        fs.appendFile(`google.json`, JSON.stringify(res), function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("append operation completed.");
+          }
+        });
+        // }
+        if (err.code === "ENOENT") {
+          console.log("🚀 ~ file: scrape.js ~ line 77 ~ writeFile");
+          fs.writeFile(
+            // `${__dirname}/${arr.slice(0, 1)}.json`,
+            `google.json`,
+            JSON.stringify(res),
+            // { flag: "wx" },
+            () => {
+              console.log(
+                "🚀 ~ file: scrape.js ~ line 44 ~ fs.writeFile ~ linkRes"
+              );
+            }
           );
+        } else {
+          console.log("Some other error: ", err.code);
         }
-      );
+      });
     });
   } catch (e) {
     console.error(e);
@@ -106,7 +124,7 @@ const scraperGoog = async () => {
         googleScrape(arr.slice(x, x + 3)).then((res) => {
           console.log(
             "🚀 ~ file: scrape.js ~ line 99 ~ googleScrape ~ slice",
-            res,
+            arr.slice(x, x + 3),
             x
           );
           x = x + 3;
