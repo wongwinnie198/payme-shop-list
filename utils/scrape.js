@@ -46,23 +46,6 @@ const convertArrayToJsonObj = (arr) => {
   console.log(jsonObj);
   return JSON.stringify(jsonObj);
 };
-const checkWriteFile = () => {
-  const test = [
-    "https://www.google.com/search?q=dog&sourceid=chrome&ie=UTF-8",
-    "https://www.google.com/search?q=1&sourceid=chrome&ie=UTF-8",
-    "https://www.google.com/search?q=2&sourceid=chrome&ie=UTF-8",
-  ];
-  fs.writeFile(filePaths.googleJson, convertArrayToJsonObj(test), (err) => {
-    if (err) {
-      console.log("The error in cb", err);
-    } else {
-      // reading file test
-      console.log("File written successfully\n");
-      console.log("The written has the following contents:");
-      console.log(fs.readFileSync(filePaths.googleJson, "utf8"));
-    }
-  });
-};
 
 const fileWriting = async (res) => {
   console.log("hiiii", res);
@@ -108,50 +91,6 @@ const fileWriting = async (res) => {
       }
     });
   }
-  //  await fs.stat(filePaths.googleJson, (err, stats) => {
-  //   console.log('is it running? the error: ', err)
-  //     //if file doesnt exists, create new file and write to it
-  //     if (err.code!==null && err.code == "ENOENT") {
-  //       console.log("Error code: ", err.code);
-  //       fs.writeFile(filePaths.googleJson, convertArrayToJsonObj(res), (err) => {
-  //         console.log('yooooooo')
-  //         if (err) {
-  //           console.log("The error in cb", err);
-  //         } else {
-  //           // reading file test
-  //           console.log("File written successfully\n");
-  //           console.log("The written has the following contents:");
-  //           console.log(fs.readFileSync(filePaths.googleJson, "utf8"));
-  //         }
-  //       });
-  //   }
-  //   else {
-  //     //if file exists, add data
-
-  //     //logging stats for file
-  //     console.log("Stats object for: " + filePaths.googleJson);
-  //     console.log(stats);
-  //     console.log("Path is file:", stats.isFile());
-  //     console.log("Path is directory:", stats.isDirectory());
-
-  //     //writing into file
-  //     /** using flag in writeFile for adding doc*/
-  //     fs.writeFile(
-  //       filePaths.googleJson,
-  //       convertArrayToJsonObj(res),
-  //       { flag: "a" },
-  //       (err) => {
-  //         if (err) {
-  //           throw err;
-  //         }
-  //         console.log("Adding data Success");
-  //         // reading file test
-  //         let data = fs.readFileSync(filePaths.googleJson, "utf-8");
-  //         console.log("data added -->" + data);
-  //       }
-  //     );
-  //   }
-  // });
 };
 
 const googleScrape = async (arr) => {
@@ -272,4 +211,3 @@ const scraperPayme = async () => {
 };
 
 scraperGoog();
-// checkWriteFile();
