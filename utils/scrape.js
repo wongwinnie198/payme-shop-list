@@ -39,25 +39,49 @@ const filePaths = {
   googleJson: "google.json",
 };
 
+/**
+ * @param arr string[]
+ * @return string
+ * Converting  array into stringigied json object*/
+
 const convertArrayToJsonObj = (arr) => {
-  const jsonObj = {};
   //TODO: write async func for replacement of  ">"
-  arr.forEach((ele, _) => (jsonObj[ele.replace('›','')] = ele));
-  console.log(jsonObj);
-  return JSON.stringify(jsonObj);
+  // arr.forEach((ele, _) => (jsonObj[ele] = ele));
+  const res = arr.reduce((prev, curr, ind) => {
+    return { ...prev, [ind]: curr };
+  }, {});
+
+  return JSON.stringify(res);
 };
 
 const fileWriting = async (res) => {
   console.log("hiiii", res);
 
   try {
-    //if file exists, add data
+    //if file exists, append data
+    //reading current data
+    /**@param data string|undefined */
+    // const newContent = {};
+    // const currContent = await fs
+    //   .readFile(filePaths.googleJson, "utf8")
+    //   .then((data) => {
+    //     if (data == undefined) {
+    //       return {}
+    //     }
+        
+    //     return data;
+    //   });
+    
+    
+    // console.log(
+    //   "🚀 ~ file: scrape.js ~ line 67 ~ currContent ~ currContent",
+    //   currContent
+    // );
 
     //writing into file
-    /** using flag in writeFile for adding doc*/
     await fs.writeFile(
       filePaths.googleJson,
-      ',' + convertArrayToJsonObj(res),
+      convertArrayToJsonObj(res),
       { flag: "a" },
       (err) => {
         if (err) {
@@ -77,7 +101,6 @@ const fileWriting = async (res) => {
           filePaths.googleJson,
           convertArrayToJsonObj(res),
           (err) => {
-            console.log("yooooooo");
             if (err) {
               console.log("The error in cb", err);
             } else {
