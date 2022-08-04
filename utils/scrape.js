@@ -35,6 +35,125 @@ const classNames = {
   payme: "name",
 };
 
+const filePaths = {
+  googleJson: "google.json",
+};
+
+const convertArrayToJsonObj = (arr) => {
+  const jsonObj = {};
+  //TODO: write async func for replacement of  ">"
+  arr.forEach((ele, _) => (jsonObj[ele.replace('›','')] = ele));
+  console.log(jsonObj);
+  return JSON.stringify(jsonObj);
+};
+const checkWriteFile = () => {
+  const test = [
+    "https://www.google.com/search?q=dog&sourceid=chrome&ie=UTF-8",
+    "https://www.google.com/search?q=1&sourceid=chrome&ie=UTF-8",
+    "https://www.google.com/search?q=2&sourceid=chrome&ie=UTF-8",
+  ];
+  fs.writeFile(filePaths.googleJson, convertArrayToJsonObj(test), (err) => {
+    if (err) {
+      console.log("The error in cb", err);
+    } else {
+      // reading file test
+      console.log("File written successfully\n");
+      console.log("The written has the following contents:");
+      console.log(fs.readFileSync(filePaths.googleJson, "utf8"));
+    }
+  });
+};
+
+const fileWriting = async (res) => {
+  console.log("hiiii", res);
+
+  try {
+    //if file exists, add data
+
+    //writing into file
+    /** using flag in writeFile for adding doc*/
+    await fs.writeFile(
+      filePaths.googleJson,
+      ',' + convertArrayToJsonObj(res),
+      { flag: "a" },
+      (err) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Adding data Success");
+        // reading file test
+        let data = fs.readFileSync(filePaths.googleJson, "utf-8");
+        console.log("data added -->" + data);
+      }
+    );
+  } catch (err) {
+    console.log("try catch err:", err);
+    await fs.stat(filePath, (error, _) => {
+      if (error !== null && error.code === "ENOENT") {
+        fs.writeFile(
+          filePaths.googleJson,
+          convertArrayToJsonObj(res),
+          (err) => {
+            console.log("yooooooo");
+            if (err) {
+              console.log("The error in cb", err);
+            } else {
+              // reading file test
+              console.log("File written successfully\n");
+              console.log("The written has the following contents:");
+              console.log(fs.readFileSync(filePaths.googleJson, "utf8"));
+            }
+          }
+        );
+      }
+    });
+  }
+  //  await fs.stat(filePaths.googleJson, (err, stats) => {
+  //   console.log('is it running? the error: ', err)
+  //     //if file doesnt exists, create new file and write to it
+  //     if (err.code!==null && err.code == "ENOENT") {
+  //       console.log("Error code: ", err.code);
+  //       fs.writeFile(filePaths.googleJson, convertArrayToJsonObj(res), (err) => {
+  //         console.log('yooooooo')
+  //         if (err) {
+  //           console.log("The error in cb", err);
+  //         } else {
+  //           // reading file test
+  //           console.log("File written successfully\n");
+  //           console.log("The written has the following contents:");
+  //           console.log(fs.readFileSync(filePaths.googleJson, "utf8"));
+  //         }
+  //       });
+  //   }
+  //   else {
+  //     //if file exists, add data
+
+  //     //logging stats for file
+  //     console.log("Stats object for: " + filePaths.googleJson);
+  //     console.log(stats);
+  //     console.log("Path is file:", stats.isFile());
+  //     console.log("Path is directory:", stats.isDirectory());
+
+  //     //writing into file
+  //     /** using flag in writeFile for adding doc*/
+  //     fs.writeFile(
+  //       filePaths.googleJson,
+  //       convertArrayToJsonObj(res),
+  //       { flag: "a" },
+  //       (err) => {
+  //         if (err) {
+  //           throw err;
+  //         }
+  //         console.log("Adding data Success");
+  //         // reading file test
+  //         let data = fs.readFileSync(filePaths.googleJson, "utf-8");
+  //         console.log("data added -->" + data);
+  //       }
+  //     );
+  //   }
+  // });
+};
+
 const googleScrape = async (arr) => {
   try {
     //TODO setTimeInterval to scrape google, 10 times each interval
@@ -44,44 +163,17 @@ const googleScrape = async (arr) => {
       const page = await browser.newPage();
       await page.goto(arr[i]);
       const googRes = await page.evaluate(() => {
-        //TODO add regex
+        //TODO add regex to extract links only
         return document.getElementsByTagName("cite")[0].innerText;
       });
       await browser.close();
       return googRes;
     });
-    await Promise.all(linksRes).then((res) => {
-      //TODO make sense file name and make write new files if not exists
-      fs.stat(`google.json`, function (err, _) {
-        console.log("err.code", err.code);
-        // if (err == null) {
-        console.log(`google.json exists`);
-        fs.appendFile(`google.json`, JSON.stringify(res), function (err) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("append operation completed.");
-          }
-        });
-        // }
-        if (err.code === "ENOENT") {
-          console.log("🚀 ~ file: scrape.js ~ line 77 ~ writeFile");
-          fs.writeFile(
-            // `${__dirname}/${arr.slice(0, 1)}.json`,
-            `google.json`,
-            JSON.stringify(res),
-            // { flag: "wx" },
-            () => {
-              console.log(
-                "🚀 ~ file: scrape.js ~ line 44 ~ fs.writeFile ~ linkRes"
-              );
-            }
-          );
-        } else {
-          console.log("Some other error: ", err.code);
-        }
-      });
+    const res = await Promise.all(linksRes).then((res) => {
+      return res;
     });
+    console.log("googleScrape res: ", res);
+    return res;
   } catch (e) {
     console.error(e);
   }
@@ -104,6 +196,7 @@ const scraperGoog = async () => {
       );
     }
     // console.log(toLinks.slice(0, 9));
+    //TODO cut the read file into 2 parts
     const arr = [
       "https://www.google.com/search?q=3hreesixty&sourceid=chrome&ie=UTF-8",
       "https://www.google.com/search?q=Ecco&sourceid=chrome&ie=UTF-8",
@@ -122,6 +215,7 @@ const scraperGoog = async () => {
     const run = setInterval(() => {
       if (x <= 10) {
         googleScrape(arr.slice(x, x + 3)).then((res) => {
+          fileWriting(res);
           console.log(
             "🚀 ~ file: scrape.js ~ line 99 ~ googleScrape ~ slice",
             arr.slice(x, x + 3),
@@ -132,6 +226,7 @@ const scraperGoog = async () => {
       }
     }, "5000");
     run();
+    //TODO: auto exit process
     if (x <= 10) {
       clearInterval(run);
       process.exit();
@@ -177,3 +272,4 @@ const scraperPayme = async () => {
 };
 
 scraperGoog();
+// checkWriteFile();
