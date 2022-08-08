@@ -2,8 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { Table } from "../components/Table";
 import styles from "../styles/Home.module.css";
-import { GetStaticProps } from "next";
-import { prisma } from "../utils/db";
+import prisma from "../lib/prisma";
 
 interface TableProps {
   links: string[];
@@ -27,9 +26,6 @@ const Home: NextPage<TableProps> = ({ links }) => {
 export default Home;
 
 export async function getStaticProps() {
-  // const readLinks = async () => {
-  //   await prisma.links.findMany();
-  // };
   const links = await prisma.links.findMany();
   return {
     props: {
