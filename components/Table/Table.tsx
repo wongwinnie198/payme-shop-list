@@ -2,7 +2,17 @@ import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import tableStyles from "./table.module.scss";
 
-export const Table = () => {
+import { InferGetStaticPropsType } from "next";
+
+interface TableProps {
+  links: {
+    id: string;
+    shop_name: string;
+    shop_url: string;
+  };
+}
+
+export const Table: React.FC<TableProps> = ({ links }) => {
   const data = useMemo(
     () => [
       {
@@ -10,7 +20,6 @@ export const Table = () => {
         nameCol: "World",
         linkCol: "World",
       },
-      
     ],
     []
   );
@@ -35,6 +44,16 @@ export const Table = () => {
     useTable({ columns, data });
   return (
     <div className={tableStyles.tableContainer}>
+      {/* <div>
+        {links.map((link, ind) => {
+          return (
+            <div key={ind}>
+              <p>{link.shop_name}</p>
+              <p>{link.shop_url}</p>
+            </div>
+          );
+        })}
+      </div> */}
       <table {...getTableProps()} className={tableStyles.table}>
         <thead className={tableStyles.tableHead}>
           {headerGroups.map((headerGroup, ind) => (

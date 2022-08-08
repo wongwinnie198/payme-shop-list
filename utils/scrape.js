@@ -4,6 +4,8 @@ const fs = require("fs").promises,
 // const path =require("path") ;
 // const __dirname = path.dirname(__filename);
 
+
+
 class Links {
   getFrom() {
     return `https://payme.hsbc.com.hk/zh-hk/merchant-list`;
@@ -68,11 +70,10 @@ const fileWriting = async (res) => {
     //     if (data == undefined) {
     //       return {}
     //     }
-        
+
     //     return data;
     //   });
-    
-    
+
     // console.log(
     //   "🚀 ~ file: scrape.js ~ line 67 ~ currContent ~ currContent",
     //   currContent
